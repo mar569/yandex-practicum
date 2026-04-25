@@ -28,3 +28,7 @@
 - `src/styles/` — SCSS (`variables`, `mixins`, `components/`, `pages/`, `main.scss`)
 - `src/utils/` — TypeScript-модули (auth, chats, валидация, DOM)
 - `src/entries/` — скрипты страниц Handlebars (подключаются из `static/*.html`)
+
+
+## Деплой
+Netlify: https://yandex-chat-practica.netlify.app/
