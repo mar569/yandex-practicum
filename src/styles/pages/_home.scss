@@ -1,0 +1,19 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.home {
+  @include centered-page;
+  flex-direction: column;
+
+  &__title {
+    font-size: 28px;
+    margin-bottom: $space-lg;
+  }
+
+  &__nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+    align-items: center;
+  }
+}

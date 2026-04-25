@@ -1,0 +1,18 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.error-page {
+  @include centered-page;
+  flex-direction: column;
+  text-align: center;
+
+  h1 {
+    font-size: 64px;
+    margin-bottom: $space-md;
+  }
+
+  p {
+    color: $color-text-light;
+    margin-bottom: $space-lg;
+  }
+}

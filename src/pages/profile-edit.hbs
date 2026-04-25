@@ -1,0 +1,20 @@
+<main class="profile">
+  <div class="profile__back">
+    <a href="/static/profile.html" class="profile__back-btn" aria-label="Назад">←</a>
+  </div>
+  <section class="profile__main">
+    <h1 class="profile__name">Изменить данные</h1>
+    <form id="edit-form" method="post" aria-label="Изменить данные" novalidate>
+      {{> field label="Почта" name="email" type="email" defaultValue=email}}
+      {{> field label="Логин" name="login" type="text" defaultValue=login}}
+      {{> field label="Имя" name="first_name" type="text" defaultValue=first_name}}
+      {{> field label="Фамилия" name="second_name" type="text" defaultValue=second_name}}
+      {{> field label="Имя в чате" name="display_name" type="text" defaultValue=display_name}}
+      {{> field label="Телефон" name="phone" type="tel" defaultValue=phone}}
+      <div class="field__error field__error--form" id="form-error" role="alert"></div>
+      <div class="profile__submit-wrap">
+        <button class="btn" type="submit">Сохранить</button>
+      </div>
+    </form>
+  </section>
+</main>

@@ -1,0 +1,18 @@
+<main class="auth">
+  <section class="auth__card">
+    <h1 class="auth__title">Регистрация</h1>
+    <form id="register-form" method="post" aria-label="Форма регистрации" novalidate>
+      {{> field label="Почта" name="email" type="email" defaultValue=""}}
+      {{> field label="Логин" name="login" type="text" defaultValue=""}}
+      {{> field label="Имя" name="first_name" type="text" defaultValue=""}}
+      {{> field label="Фамилия" name="second_name" type="text" defaultValue=""}}
+      {{> field label="Телефон" name="phone" type="tel" defaultValue=""}}
+      {{> field label="Пароль" name="password" type="password" defaultValue=""}}
+      <div class="field__error field__error--form" id="form-error" role="alert"></div>
+      <button class="btn" type="submit">Зарегистрироваться</button>
+    </form>
+    <nav class="auth__footer">
+      <a href="/static/login.html">Войти</a>
+    </nav>
+  </section>
+</main>

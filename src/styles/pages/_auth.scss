@@ -1,0 +1,25 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.auth {
+  @include centered-page;
+
+  &__card {
+    @include card;
+    width: 100%;
+    max-width: 380px;
+    padding: $space-xl;
+  }
+
+  &__title {
+    text-align: center;
+    font-size: $font-size-xl;
+    margin-bottom: $space-xl;
+  }
+
+  &__footer {
+    text-align: center;
+    margin-top: $space-md;
+    font-size: $font-size-base;
+  }
+}

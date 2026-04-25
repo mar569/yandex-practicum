@@ -1,0 +1,28 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.modal {
+  border: none;
+  border-radius: $radius;
+  padding: $space-lg;
+  min-width: 320px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  &__title {
+    margin: 0 0 $space-md;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+    margin-top: $space-md;
+  }
+}

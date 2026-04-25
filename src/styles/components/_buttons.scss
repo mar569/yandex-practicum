@@ -1,0 +1,67 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.btn {
+  @include reset-button;
+  display: inline-block;
+  width: 100%;
+  padding: 14px 16px;
+  background: $color-primary;
+  color: #fff;
+  border-radius: $radius;
+  font-size: $font-size-md;
+  font-weight: 500;
+  text-align: center;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $color-primary-hover;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $color-primary;
+    padding: $space-sm 0;
+    width: auto;
+
+    &:hover {
+      background: transparent;
+      text-decoration: underline;
+    }
+  }
+
+  &--danger {
+    color: $color-danger;
+    background: transparent;
+
+    &:hover {
+      background: transparent;
+      text-decoration: underline;
+    }
+  }
+
+  &--secondary {
+    background: $color-bg-muted;
+    color: $color-text;
+    margin-top: $space-sm;
+
+    &:hover {
+      background: #e8e8ea;
+    }
+  }
+}

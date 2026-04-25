@@ -1,0 +1,37 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: $space-md;
+
+  &__label {
+    font-size: 11px;
+    color: $color-text-muted;
+  }
+
+  &__input {
+    @include underline-input;
+  }
+
+  &__error {
+    color: $color-danger;
+    font-size: 11px;
+    min-height: 14px;
+    display: block;
+
+    &--form {
+      margin-bottom: $space-sm;
+      min-height: 18px;
+    }
+  }
+}
+
+.form-success {
+  color: #2e7d32;
+  font-size: 12px;
+  margin-top: $space-sm;
+  min-height: 18px;
+}

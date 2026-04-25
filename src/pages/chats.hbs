@@ -1,0 +1,93 @@
+<main class="chat-layout">
+  <aside class="sidebar">
+    <div class="sidebar__top">
+      <button type="button" class="btn btn--ghost" id="btn-new-chat" aria-label="Создать чат">+ Чат</button>
+      <a class="sidebar__profile-link" href="/static/profile.html">Профиль</a>
+    </div>
+    <form class="sidebar__search" id="search-form" role="search" aria-label="Поиск чатов" method="get" action="#">
+      <input type="search" name="query" id="chat-search" placeholder="Поиск" aria-label="Поиск" />
+    </form>
+    <nav class="sidebar__list" aria-label="Список чатов">
+      <div class="sidebar__empty" id="chat-list-empty" hidden>Нет чатов</div>
+      <ul id="chat-list"></ul>
+    </nav>
+  </aside>
+
+  <section class="conversation">
+    <div class="conversation__placeholder" id="conversation-placeholder">Выберите чат чтобы отправить сообщение</div>
+    <div id="conversation-active" hidden>
+      <header class="conversation__header">
+        <form id="chat-avatar-form" class="conversation__avatar-form" aria-label="Аватар чата">
+          <label class="conversation__avatar-label" for="chat-avatar-input">
+            <span class="conversation__header-avatar" id="chat-avatar-slot" aria-hidden="true"></span>
+          </label>
+          <input id="chat-avatar-input" type="file" name="avatar" accept="image/*" class="visually-hidden" />
+        </form>
+        <h1 class="conversation__title" id="chat-title"></h1>
+        <span class="conversation__header-spacer"></span>
+        <span class="conversation__members" id="chat-members-count"></span>
+        <button type="button" class="conversation__header-menu" id="btn-chat-menu" aria-label="Меню чата">⋮</button>
+      </header>
+
+      <div class="chat-menu" id="chat-menu" hidden>
+        <button type="button" class="btn btn--ghost" id="btn-add-user">+ Добавить пользователя</button>
+        <button type="button" class="btn btn--ghost" id="btn-remove-user">− Удалить пользователя</button>
+        <button type="button" class="btn btn--danger" id="btn-delete-chat">Удалить чат</button>
+      </div>
+
+      <div class="conversation__body" id="message-list"></div>
+
+      <form class="conversation__footer" id="message-form" aria-label="Отправить сообщение" method="post" action="#">
+        <button type="button" class="conversation__attach" aria-label="Прикрепить" disabled>📎</button>
+        <input class="conversation__input" name="message" type="text" placeholder="Сообщение" autocomplete="off" />
+        <button type="submit" class="btn btn--icon" aria-label="Отправить">→</button>
+      </form>
+      <div class="field__error" id="msg-error" role="alert"></div>
+    </div>
+  </section>
+</main>
+
+<dialog class="modal" id="dlg-create" aria-labelledby="dlg-create-title">
+  <form id="form-create-chat" method="post" action="#">
+    <h2 id="dlg-create-title" class="modal__title">Создать чат</h2>
+    <div class="field">
+      <label class="field__label" for="new-chat-title">Название</label>
+      <input id="new-chat-title" name="title" class="field__input" />
+      <span class="field__error" id="err-create" role="alert"></span>
+    </div>
+    <div class="modal__actions">
+      <button type="submit" class="btn">Создать</button>
+      <button type="button" class="btn btn--ghost" id="dlg-create-cancel">Отмена</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="dlg-add-user" aria-labelledby="dlg-add-title">
+  <form id="form-add-user" method="post" action="#">
+    <h2 id="dlg-add-title" class="modal__title">Добавить пользователя</h2>
+    <div class="field">
+      <label class="field__label" for="add-user-login">Логин</label>
+      <input id="add-user-login" name="login" class="field__input" type="text" required />
+      <span class="field__error" id="err-add-user" role="alert"></span>
+    </div>
+    <div class="modal__actions">
+      <button type="submit" class="btn">Добавить</button>
+      <button type="button" class="btn btn--ghost" id="dlg-add-cancel">Отмена</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="dlg-remove-user" aria-labelledby="dlg-remove-title">
+  <form id="form-remove-user" method="post" action="#">
+    <h2 id="dlg-remove-title" class="modal__title">Удалить пользователя</h2>
+    <div class="field">
+      <label class="field__label" for="remove-user-login">Логин</label>
+      <input id="remove-user-login" name="login" class="field__input" type="text" required />
+      <span class="field__error" id="err-remove-user" role="alert"></span>
+    </div>
+    <div class="modal__actions">
+      <button type="submit" class="btn btn--danger">Удалить</button>
+      <button type="button" class="btn btn--ghost" id="dlg-remove-cancel">Отмена</button>
+    </div>
+  </form>
+</dialog>

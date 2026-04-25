@@ -1,0 +1,14 @@
+<main class="auth">
+  <section class="auth__card">
+    <h1 class="auth__title">Вход</h1>
+    <form id="login-form" method="post" aria-label="Форма входа" novalidate>
+      {{> field label="Логин" name="login" type="text" defaultValue=""}}
+      {{> field label="Пароль" name="password" type="password" defaultValue=""}}
+      <div class="field__error field__error--form" id="form-error" role="alert"></div>
+      <button class="btn" type="submit">Войти</button>
+    </form>
+    <nav class="auth__footer">
+      <a href="/static/register.html">Нет аккаунта?</a>
+    </nav>
+  </section>
+</main>
