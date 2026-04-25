@@ -1,6 +1,6 @@
 # Чат (Sprint 1)
 
-Учебный мессенджер: многостраничное приложение на **Vite**, **TypeScript**, **Handlebars** и **SCSS**. Авторизация и данные профиля хранятся в `localStorage` (мок).
+Учебный мессенджер: многостраничное приложение на Vite, TypeScript,Handlebars и SCSS. Авторизация и данные профиля хранятся в `localStorage` (мок).
 
 ## Стек
 
@@ -14,14 +14,14 @@
 
 Команда | Описание
 `npm install` | Установка зависимостей
-`npm run start` | Dev-сервер (**http://localhost:3000**)
+`npm run start` | Dev-сервер (http://localhost:3000)
 `npm run build` | Проверка TypeScript и production-сборка в `dist/`
 `npm run preview` | Локальный просмотр сборки
 `npm test` | Запуск тестов
 
 ## Структура
 
-- `index.html` — точка входа **React** (Vite): `src/main.tsx`
+- `index.html` — точка входа React (Vite): `src/main.tsx`
 - `static/` — HTML многостраничного варианта (Handlebars), скрипты: `../src/entries/*.ts`
 - `src/pages/` — шаблоны Handlebars (`.hbs`)
 - `src/components/` — partials для Handlebars
