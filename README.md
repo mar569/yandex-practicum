@@ -1,6 +1,7 @@
 # Чат (Sprint 1)
 
-Учебный мессенджер: многостраничное приложение на Vite, TypeScript,Handlebars и SCSS. Авторизация и данные профиля хранятся в `localStorage` (мок).
+Учебный мессенджер: многостраничное приложение на Vite, TypeScript, Handlebars и SCSS. Авторизация и данные профиля хранятся в `localStorage` (мок).
+
 
 ## Стек
 
@@ -28,3 +29,7 @@
 - `src/styles/` — SCSS (`variables`, `mixins`, `components/`, `pages/`, `main.scss`)
 - `src/utils/` — TypeScript-модули (auth, chats, валидация, DOM)
 - `src/entries/` — скрипты страниц Handlebars (подключаются из `static/*.html`)
+
+## Деплой
+
+- Netlify: https://yandex-chat-practica.netlify.app/
