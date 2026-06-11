@@ -1,23 +1,23 @@
 import "../styles/main.scss";
 import Handlebars from "handlebars";
 import tpl from "../pages/profile-edit.hbs?raw";
-import { registerFieldPartial } from "../utils/partials";
-import { renderHandlebarsFragment, clearText, setText } from "../utils/dom";
-import { auth } from "../utils/auth";
-import { validateForm, validators } from "../utils/validation";
-import { staticHtml } from "../utils/staticHtmlUrl";
+import { renderHandlebarsFragment } from "@/utils/dom";
+import { ProfileController } from "@/controllers/ProfileController";
+import { Button } from "@/components/Button";
+import { Form } from "@/components/Form";
+import { Input } from "@/components/Input";
+import { auth } from "@/utils/auth";
+import { router } from "@/core/Router";
 
-registerFieldPartial();
+export async function mountProfileEditPage(root: HTMLElement): Promise<void> {
+  const me = auth.current();
+  if (!me) {
+    router.go("/");
+    return;
+  }
 
-const app = document.getElementById("app");
-if (!app) throw new Error("Нет контейнера #app");
-
-const me = auth.current();
-if (!me) {
-  window.location.assign(staticHtml("login.html"));
-} else {
   renderHandlebarsFragment(
-    app,
+    root,
     Handlebars.compile(tpl)({
       email: me.email,
       login: me.login,
@@ -28,41 +28,87 @@ if (!me) {
     }),
   );
 
-  const fields = ["email", "login", "first_name", "second_name", "display_name", "phone"] as const;
+  const formContainer = document.getElementById("edit-form-container");
+  if (!formContainer)
+    throw new Error("Нет контейнера формы редактирования профиля");
 
-  const form = document.getElementById("edit-form") as HTMLFormElement | null;
-  form?.addEventListener("submit", (e: SubmitEvent) => {
-    e.preventDefault();
-    for (const f of fields) clearText(`err-${f}`);
-    clearText("form-error");
-
-    const formEl = e.currentTarget as HTMLFormElement;
-    const data = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
-    const errs = validateForm(data, {
-      email: validators.email,
-      login: validators.login,
-      first_name: validators.name,
-      second_name: validators.name,
-      display_name: validators.name,
-      phone: validators.phone,
-    });
-    for (const k of Object.keys(errs)) {
-      setText(`err-${k}`, errs[k] ?? "");
-    }
-    if (Object.keys(errs).length) return;
-
-    try {
-      auth.update({
-        email: data.email,
-        login: data.login,
-        first_name: data.first_name,
-        second_name: data.second_name,
-        phone: data.phone,
-        display_name: data.display_name,
-      });
-      window.location.assign(staticHtml("profile.html"));
-    } catch (err) {
-      setText("form-error", (err as Error).message);
-    }
+  const profileForm = new Form({
+    id: "edit-form",
+    ariaLabel: "Изменить данные",
+    className: "profile__form",
+    children: [
+      new Input({
+        id: "email",
+        name: "email",
+        label: "Почта",
+        type: "email",
+        value: me.email,
+      }).getContent(),
+      new Input({
+        id: "login",
+        name: "login",
+        label: "Логин",
+        type: "text",
+        value: me.login,
+      }).getContent(),
+      new Input({
+        id: "first_name",
+        name: "first_name",
+        label: "Имя",
+        type: "text",
+        value: me.first_name,
+      }).getContent(),
+      new Input({
+        id: "second_name",
+        name: "second_name",
+        label: "Фамилия",
+        type: "text",
+        value: me.second_name,
+      }).getContent(),
+      new Input({
+        id: "display_name",
+        name: "display_name",
+        label: "Имя в чате",
+        type: "text",
+        value: me.display_name,
+      }).getContent(),
+      new Input({
+        id: "phone",
+        name: "phone",
+        label: "Телефон",
+        type: "tel",
+        value: me.phone,
+      }).getContent(),
+      (() => {
+        const error = document.createElement("div");
+        error.className = "field__error field__error--form";
+        error.id = "form-error";
+        error.setAttribute("role", "alert");
+        return error;
+      })(),
+      new Button({
+        type: "submit",
+        label: "Сохранить",
+        className: "btn",
+      }).getContent(),
+    ],
+    onSubmit: () => {
+      // handled by controller
+    },
   });
+
+  formContainer.appendChild(profileForm.getContent());
+
+  const profileController = new ProfileController();
+  const editElement = document.getElementById(
+    "edit-form",
+  ) as HTMLFormElement | null;
+  if (editElement) {
+    profileController.initEditPage(editElement);
+  }
+}
+
+const profileEditRoot = document.getElementById("app");
+if (profileEditRoot && document.getElementById("edit-form-container")) {
+  void mountProfileEditPage(profileEditRoot);
 }

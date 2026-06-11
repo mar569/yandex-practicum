@@ -1,22 +1,14 @@
-import { staticHtml } from "@/utils/staticHtmlUrl";
-
-export function App() {
-  return (
-    <main className="home">
-      <h1 className="home__title">Чат</h1>
-      <nav className="home__nav" aria-label="Карта страниц">
+export function App(): string {
+  return `
+    <main class="home">
+      <h1 class="home__title">Чат</h1>
+      <nav class="home__nav" aria-label="Карта страниц">
         <ul>
-          <li>
-            <a href={staticHtml("login.html")}>Авторизация</a>
-          </li>
-          <li>
-            <a href={staticHtml("register.html")}>Регистрация</a>
-          </li>
-          <li>
-            <a href={staticHtml("profile.html")}>Профиль</a>
-          </li>
+          <li><a href="/">Авторизация</a></li>
+          <li><a href="/sign-up">Регистрация</a></li>
+          <li><a href="/settings">Профиль</a></li>
         </ul>
       </nav>
     </main>
-  );
+  `;
 }

@@ -1,9 +1,13 @@
 import "../styles/main.scss";
 import Handlebars from "handlebars";
 import tpl from "../pages/404.hbs?raw";
-import { renderHandlebarsFragment } from "../utils/dom";
+import { renderHandlebarsFragment } from "@/utils/dom";
 
-const app = document.getElementById("app");
-if (!app) throw new Error("Нет контейнера #app");
+export function mountNotFoundPage(root: HTMLElement): void {
+  renderHandlebarsFragment(root, Handlebars.compile(tpl)({}));
+}
 
-renderHandlebarsFragment(app, Handlebars.compile(tpl)({}));
+const notFoundRoot = document.getElementById("app");
+if (notFoundRoot && window.location.pathname === "/404") {
+  mountNotFoundPage(notFoundRoot);
+}

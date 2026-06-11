@@ -1,4 +1,6 @@
-import { storage } from "./storage";
+import { authApi, type SignUpPayload } from "@/api/auth";
+import { userApi } from "@/api/user";
+import { store } from "@/core/Store";
 
 export interface User {
   id: string;
@@ -8,71 +10,129 @@ export interface User {
   second_name: string;
   display_name: string;
   phone: string;
-  password: string;
   avatar?: string;
+  password?: string;
 }
 
-const USERS_KEY = "users";
-const SESSION_KEY = "session";
-
-const uid = () => Math.random().toString(36).slice(2, 10);
-
 export const auth = {
-  list(): User[] {
-    return storage.get<User[]>(USERS_KEY, []);
-  },
-  saveAll(users: User[]) {
-    storage.set(USERS_KEY, users);
-  },
   current(): User | null {
-    const id = storage.get<string | null>(SESSION_KEY, null);
-    if (!id) return null;
-    return this.list().find((u) => u.id === id) ?? null;
+    return store.getState().user;
   },
-  register(
-    data: Omit<User, "id" | "display_name" | "avatar"> & { display_name?: string },
-  ): User {
-    const users = this.list();
-    if (users.some((u) => u.login === data.login)) {
-      throw new Error("Логин уже занят");
+
+  async check(): Promise<User | null> {
+    try {
+      const user = await authApi.getUser();
+      store.setState({ user });
+      // Save to localStorage as backup
+      localStorage.setItem('chat_app:user', JSON.stringify(user));
+      return user;
+    } catch (error) {
+      console.error(
+        "Auth check failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      // Try to restore from localStorage
+      try {
+        const cachedRaw = localStorage.getItem('chat_app:user');
+        if (cachedRaw) {
+          const cachedUser = JSON.parse(cachedRaw) as User;
+          console.log('Restored user from localStorage');
+          store.setState({ user: cachedUser });
+          return cachedUser;
+        }
+      } catch {
+        // Ignore parse errors
+      }
+      store.setState({ user: null });
+      return null;
     }
-    if (users.some((u) => u.email === data.email)) {
-      throw new Error("Почта уже зарегистрирована");
+  },
+
+  async login(login: string, password: string): Promise<User> {
+    try {
+      const user = await authApi.signIn({ login, password });
+      store.setState({ user });
+      // Save to localStorage
+      localStorage.setItem('chat_app:user', JSON.stringify(user));
+      return user;
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      throw error;
     }
-    const user: User = {
-      ...data,
-      display_name: data.display_name || data.first_name,
-      id: uid(),
-    };
-    users.push(user);
-    this.saveAll(users);
-    storage.set(SESSION_KEY, user.id);
-    return user;
   },
-  login(login: string, password: string): User {
-    const user = this.list().find((u) => u.login === login);
-    if (!user) throw new Error("Пользователь не найден");
-    if (user.password !== password) throw new Error("Неверный пароль");
-    storage.set(SESSION_KEY, user.id);
-    return user;
+
+  async register(data: SignUpPayload): Promise<User> {
+    try {
+      const user = await authApi.signUp(data);
+      store.setState({ user });
+      // Save to localStorage
+      localStorage.setItem('chat_app:user', JSON.stringify(user));
+      return user;
+    } catch (error) {
+      console.error(
+        "Registration failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      throw error;
+    }
   },
-  logout() {
-    storage.remove(SESSION_KEY);
+
+  async logout(): Promise<void> {
+    try {
+      await authApi.logout();
+      store.setState({ user: null });
+      // Clear localStorage
+      localStorage.removeItem('chat_app:user');
+    } catch (error) {
+      console.error(
+        "Logout failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      // Still clear local state even if logout fails
+      store.setState({ user: null });
+      localStorage.removeItem('chat_app:user');
+    }
   },
-  update(patch: Partial<User>): User {
-    const cur = this.current();
-    if (!cur) throw new Error("Не авторизован");
-    const users = this.list().map((u) => (u.id === cur.id ? { ...u, ...patch } : u));
-    this.saveAll(users);
-    return users.find((u) => u.id === cur.id)!;
+
+  async update(patch: Partial<User>): Promise<User> {
+    try {
+      const payload: Partial<User> = {};
+      if (patch.email !== undefined) payload.email = patch.email;
+      if (patch.login !== undefined) payload.login = patch.login;
+      if (patch.first_name !== undefined) payload.first_name = patch.first_name;
+      if (patch.second_name !== undefined)
+        payload.second_name = patch.second_name;
+      if (patch.display_name !== undefined)
+        payload.display_name = patch.display_name;
+      if (patch.phone !== undefined) payload.phone = patch.phone;
+
+      const user = await userApi.updateProfile(payload);
+      store.setState({ user });
+      return user;
+    } catch (error) {
+      console.error(
+        "Profile update failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      throw error;
+    }
   },
-  changePassword(oldPwd: string, newPwd: string): void {
-    const cur = this.current();
-    if (!cur) throw new Error("Не авторизован");
-    if (cur.password !== oldPwd) throw new Error("Старый пароль неверен");
-    this.update({ password: newPwd });
-  },
-  findByLogin(login: string): User | undefined {
-    return this.list().find((u) => u.login === login);
+
+  async changePassword(
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    try {
+      await userApi.updatePassword({ oldPassword, newPassword });
+    } catch (error) {
+      console.error(
+        "Password change failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      throw error;
+    }
   },
 };

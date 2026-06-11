@@ -1,41 +1,37 @@
-<main class='profile'>
-  <div class='profile__back'>
-    <a
-      href='/static/chats.html'
-      class='profile__back-btn'
-      aria-label='Назад'
-    >←</a>
+<main class="profile">
+  <div class="profile__back">
+    <a href="/messenger" class="profile__back-btn" aria-label="Назад">←</a>
   </div>
-  <section class='profile__main'>
-    <div class='profile__avatar-wrap'>
+  <section class="profile__main">
+    <div class="profile__avatar-wrap">
       {{#if avatar}}
-        <img class='profile__avatar-img' src='{{{avatar}}}' alt='Аватар' />
+        <img class="profile__avatar-img" src="{{{avatar}}}" alt="Аватар" />
       {{else}}
         <div
-          class='profile__avatar profile__avatar--empty'
-          aria-label='Добавить фото'
+          class="profile__avatar profile__avatar--empty"
+          aria-label="Добавить фото"
         >+ фото</div>
       {{/if}}
-      <input id='avatar' type='file' name='avatar' accept='image/*' />
+      <input id="avatar" type="file" name="avatar" accept="image/*" />
     </div>
-    <h1 class='profile__name'>{{display_name}}</h1>
-    <ul class='profile__list'>
-      <li class='profile__row'><span>Почта</span><span>{{email}}</span></li>
-      <li class='profile__row'><span>Логин</span><span>{{login}}</span></li>
-      <li class='profile__row'><span>Имя</span><span>{{first_name}}</span></li>
-      <li class='profile__row'><span>Фамилия</span><span
+    <h1 class="profile__name">{{display_name}}</h1>
+    <ul class="profile__list">
+      <li class="profile__row"><span>Почта</span><span>{{email}}</span></li>
+      <li class="profile__row"><span>Логин</span><span>{{login}}</span></li>
+      <li class="profile__row"><span>Имя</span><span>{{first_name}}</span></li>
+      <li class="profile__row"><span>Фамилия</span><span
         >{{second_name}}</span></li>
-      <li class='profile__row'><span>Имя в чате</span><span
+      <li class="profile__row"><span>Имя в чате</span><span
         >{{display_name}}</span></li>
-      <li class='profile__row'><span>Телефон</span><span>{{phone}}</span></li>
+      <li class="profile__row"><span>Телефон</span><span>{{phone}}</span></li>
     </ul>
-    <nav class='profile__actions'>
-      <a href='/static/profile-edit.html'>Изменить данные</a>
-      <a href='/static/profile-password.html'>Изменить пароль</a>
+    <nav class="profile__actions">
+      <a href="/settings/edit">Изменить данные</a>
+      <a href="/settings/password">Изменить пароль</a>
       <button
-        type='button'
-        class='btn btn--danger'
-        id='logout-btn'
+        type="button"
+        class="btn btn--danger"
+        id="logout-btn"
       >Выйти</button>
     </nav>
   </section>

@@ -1,42 +1,67 @@
 import "../styles/main.scss";
 import Handlebars from "handlebars";
 import tpl from "../pages/login.hbs?raw";
-import { registerFieldPartial } from "../utils/partials";
-import { renderHandlebarsFragment, clearText, setText } from "../utils/dom";
-import { auth } from "../utils/auth";
-import { validateForm, validators } from "../utils/validation";
-import { staticHtml } from "../utils/staticHtmlUrl";
+import { renderHandlebarsFragment } from "@/utils/dom";
+import { AuthController } from "@/controllers/AuthController";
+import { Button } from "@/components/Button";
+import { Form } from "@/components/Form";
+import { Input } from "@/components/Input";
 
-registerFieldPartial();
+export async function mountLoginPage(root: HTMLElement): Promise<void> {
+  renderHandlebarsFragment(root, Handlebars.compile(tpl)({}));
 
-const app = document.getElementById("app");
-if (!app) throw new Error("Нет контейнера #app");
+  const formContainer = document.getElementById("login-form-container");
+  if (!formContainer) throw new Error("Нет контейнера формы входа");
 
-if (auth.current()) {
-  window.location.assign(staticHtml("chats.html"));
-} else {
-  renderHandlebarsFragment(app, Handlebars.compile(tpl)({}));
-
-  const form = document.getElementById("login-form") as HTMLFormElement | null;
-  form?.addEventListener("submit", (e: SubmitEvent) => {
-    e.preventDefault();
-    clearText("err-login");
-    clearText("err-password");
-    clearText("form-error");
-
-    const formEl = e.currentTarget as HTMLFormElement;
-    const data = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
-    const errs = validateForm(data, { login: validators.login, password: validators.password });
-    for (const k of Object.keys(errs)) {
-      setText(`err-${k}`, errs[k] ?? "");
-    }
-    if (Object.keys(errs).length) return;
-
-    try {
-      auth.login(data.login, data.password);
-      window.location.assign(staticHtml("chats.html"));
-    } catch (err) {
-      setText("form-error", (err as Error).message);
-    }
+  const loginForm = new Form({
+    id: "login-form",
+    ariaLabel: "Форма входа",
+    className: "auth__form",
+    children: [
+      new Input({
+        id: "login",
+        name: "login",
+        label: "Логин",
+        type: "text",
+        placeholder: "Введите логин",
+      }).getContent(),
+      new Input({
+        id: "password",
+        name: "password",
+        label: "Пароль",
+        type: "password",
+        placeholder: "Введите пароль",
+      }).getContent(),
+      (() => {
+        const error = document.createElement("div");
+        error.className = "field__error field__error--form";
+        error.id = "form-error";
+        error.setAttribute("role", "alert");
+        return error;
+      })(),
+      new Button({
+        type: "submit",
+        label: "Войти",
+        className: "btn",
+      }).getContent(),
+    ],
+    onSubmit: () => {
+      // Form submission is handled by AuthController
+    },
   });
+
+  formContainer.appendChild(loginForm.getContent());
+
+  const authController = new AuthController();
+  const loginElement = document.getElementById(
+    "login-form",
+  ) as HTMLFormElement | null;
+  if (loginElement) {
+    authController.initLogin(loginElement);
+  }
+}
+
+const loginRoot = document.getElementById("app");
+if (loginRoot && document.getElementById("login-form-container")) {
+  void mountLoginPage(loginRoot);
 }

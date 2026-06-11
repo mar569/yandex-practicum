@@ -1,34 +1,48 @@
-# Чат (Sprint 1)
+# Чат (Sprint 2)
 
-Учебный мессенджер: многостраничное приложение на Vite, TypeScript,Handlebars и SCSS. Авторизация и данные профиля хранятся в `localStorage` (мок).
+Учебный мессенджер с MVC-архитектурой, компонентами и строгой типизацией на TypeScript. Вся логика страниц реализована на стороне клиента, данные хранятся в `localStorage`.
 
 ## Стек
 
 - Vite
 - TypeScript
 - Handlebars
-- SCSS (модули: переменные, миксины, стили страниц и компонентов)
-- Vitest (юнит-тесты утилит)
+- SCSS
+- ESLint
+- Stylelint
+- Vitest
 
 ## Команды
 
 Команда | Описание
+--- | ---
 `npm install` | Установка зависимостей
-`npm run start` | Dev-сервер (http://localhost:3000)
-`npm run build` | Проверка TypeScript и production-сборка в `dist/`
+`npm run start` | Запуск dev-сервера (http://localhost:3000)
+`npm run build` | Проверка типов и production-сборка
 `npm run preview` | Локальный просмотр сборки
 `npm test` | Запуск тестов
+`npm run lint` | Проверка TypeScript, ESLint и Stylelint
 
 ## Структура
 
-- `index.html` — точка входа React (Vite): `src/main.tsx`
-- `static/` — HTML многостраничного варианта (Handlebars), скрипты: `../src/entries/*.ts`
-- `src/pages/` — шаблоны Handlebars (`.hbs`)
-- `src/components/` — partials для Handlebars
-- `src/styles/` — SCSS (`variables`, `mixins`, `components/`, `pages/`, `main.scss`)
-- `src/utils/` — TypeScript-модули (auth, chats, валидация, DOM)
-- `src/entries/` — скрипты страниц Handlebars (подключаются из `static/*.html`)
+- `src/core/` — базовый класс `Block`
+- `src/components/` — переиспользуемые UI-компоненты
+- `src/controllers/` — контроллеры для страниц и бизнес-логики
+- `src/utils/` — утилиты для валидации, DOM, хранилища и данных
+- `src/pages/` — Handlebars-шаблоны страниц
+- `src/entries/` — точка входа для каждой страницы
 
+## Функциональность
 
-## Деплой
-Netlify: https://yandex-chat-practica.netlify.app/
+- MVC-подход: View, Model, Controller
+- Валидация по `blur` и `submit`
+- Обработка данных форм без перезагрузки
+- Клиентская генерация страниц на стороне браузера
+- Переиспользуемые компоненты: `Input`, `Button`, `Form`, `ChatMessage`, `ChatItem`
+
+## Качество
+
+- Строгая TypeScript-конфигурация
+- ESLint для TypeScript
+- Stylelint для SCSS
+- `npm run lint` проверяет все правила

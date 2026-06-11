@@ -1,57 +1,95 @@
 import "../styles/main.scss";
 import Handlebars from "handlebars";
 import tpl from "../pages/register.hbs?raw";
-import { registerFieldPartial } from "../utils/partials";
-import { renderHandlebarsFragment, clearText, setText } from "../utils/dom";
-import { auth } from "../utils/auth";
-import { validateForm, validators } from "../utils/validation";
-import { staticHtml } from "../utils/staticHtmlUrl";
+import { renderHandlebarsFragment } from "@/utils/dom";
+import { AuthController } from "@/controllers/AuthController";
+import { Button } from "@/components/Button";
+import { Form } from "@/components/Form";
+import { Input } from "@/components/Input";
 
-registerFieldPartial();
+export async function mountRegisterPage(root: HTMLElement): Promise<void> {
+  renderHandlebarsFragment(root, Handlebars.compile(tpl)({}));
 
-const app = document.getElementById("app");
-if (!app) throw new Error("Нет контейнера #app");
+  const formContainer = document.getElementById("register-form-container");
+  if (!formContainer) throw new Error("Нет контейнера формы регистрации");
 
-if (auth.current()) {
-  window.location.assign(staticHtml("chats.html"));
-} else {
-  renderHandlebarsFragment(app, Handlebars.compile(tpl)({}));
-
-  const fields = ["email", "login", "first_name", "second_name", "phone", "password"] as const;
-
-  const form = document.getElementById("register-form") as HTMLFormElement | null;
-  form?.addEventListener("submit", (e: SubmitEvent) => {
-    e.preventDefault();
-    for (const f of fields) clearText(`err-${f}`);
-    clearText("form-error");
-
-    const formEl = e.currentTarget as HTMLFormElement;
-    const data = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
-    const errs = validateForm(data, {
-      email: validators.email,
-      login: validators.login,
-      first_name: validators.name,
-      second_name: validators.name,
-      phone: validators.phone,
-      password: validators.password,
-    });
-    for (const k of Object.keys(errs)) {
-      setText(`err-${k}`, errs[k] ?? "");
-    }
-    if (Object.keys(errs).length) return;
-
-    try {
-      auth.register({
-        email: data.email,
-        login: data.login,
-        first_name: data.first_name,
-        second_name: data.second_name,
-        phone: data.phone,
-        password: data.password,
-      });
-      window.location.assign(staticHtml("chats.html"));
-    } catch (err) {
-      setText("form-error", (err as Error).message);
-    }
+  const registerForm = new Form({
+    id: "register-form",
+    ariaLabel: "Форма регистрации",
+    className: "auth__form",
+    children: [
+      new Input({
+        id: "email",
+        name: "email",
+        label: "Почта",
+        type: "email",
+        placeholder: "Введите почту",
+      }).getContent(),
+      new Input({
+        id: "login",
+        name: "login",
+        label: "Логин",
+        type: "text",
+        placeholder: "Введите логин",
+      }).getContent(),
+      new Input({
+        id: "first_name",
+        name: "first_name",
+        label: "Имя",
+        type: "text",
+        placeholder: "Введите имя",
+      }).getContent(),
+      new Input({
+        id: "second_name",
+        name: "second_name",
+        label: "Фамилия",
+        type: "text",
+        placeholder: "Введите фамилию",
+      }).getContent(),
+      new Input({
+        id: "phone",
+        name: "phone",
+        label: "Телефон",
+        type: "tel",
+        placeholder: "+70000000000",
+      }).getContent(),
+      new Input({
+        id: "password",
+        name: "password",
+        label: "Пароль",
+        type: "password",
+        placeholder: "Введите пароль",
+      }).getContent(),
+      (() => {
+        const error = document.createElement("div");
+        error.className = "field__error field__error--form";
+        error.id = "form-error";
+        error.setAttribute("role", "alert");
+        return error;
+      })(),
+      new Button({
+        type: "submit",
+        label: "Зарегистрироваться",
+        className: "btn",
+      }).getContent(),
+    ],
+    onSubmit: () => {
+      // Submission is handled by the controller
+    },
   });
+
+  formContainer.appendChild(registerForm.getContent());
+
+  const authController = new AuthController();
+  const registerElement = document.getElementById(
+    "register-form",
+  ) as HTMLFormElement | null;
+  if (registerElement) {
+    authController.initRegister(registerElement);
+  }
+}
+
+const registerRoot = document.getElementById("app");
+if (registerRoot && document.getElementById("register-form-container")) {
+  void mountRegisterPage(registerRoot);
 }

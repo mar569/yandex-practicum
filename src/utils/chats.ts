@@ -66,15 +66,17 @@ export const chats = {
     if (!me) throw new Error("Не авторизован");
     const chat = this.get(id);
     if (!chat) throw new Error("Чат не найден");
-    if (chat.ownerId !== me.id) throw new Error("Только владелец может удалить чат");
+    if (chat.ownerId !== me.id)
+      throw new Error("Только владелец может удалить чат");
     this.saveAll(this.all().filter((c) => c.id !== id));
   },
   setAvatar(id: string, dataUrl: string): void {
-    this.saveAll(this.all().map((c) => (c.id === id ? { ...c, avatar: dataUrl } : c)));
+    this.saveAll(
+      this.all().map((c) => (c.id === id ? { ...c, avatar: dataUrl } : c)),
+    );
   },
   addMember(id: string, login: string): void {
-    const user = auth.findByLogin(login);
-    if (!user) throw new Error("Пользователь не найден");
+    const user = this.resolveMember(login);
     this.saveAll(
       this.all().map((c) => {
         if (c.id !== id) return c;
@@ -84,13 +86,27 @@ export const chats = {
     );
   },
   removeMember(id: string, login: string): void {
-    const user = auth.findByLogin(login);
-    if (!user) throw new Error("Пользователь не найден");
+    const user = this.resolveMember(login);
     this.saveAll(
       this.all().map((c) =>
-        c.id === id ? { ...c, memberIds: c.memberIds.filter((m) => m !== user.id) } : c,
+        c.id === id
+          ? { ...c, memberIds: c.memberIds.filter((m) => m !== user.id) }
+          : c,
       ),
     );
+  },
+  resolveMember(login: string) {
+    const current = auth.current();
+    if (current?.login === login) return current;
+    return {
+      id: `user_${login}`,
+      login,
+      email: `${login}@example.com`,
+      first_name: login,
+      second_name: login,
+      display_name: login,
+      phone: "",
+    };
   },
   sendMessage(id: string, text: string): Message {
     const me = auth.current();
@@ -103,7 +119,9 @@ export const chats = {
       ts: Date.now(),
     };
     this.saveAll(
-      this.all().map((c) => (c.id === id ? { ...c, messages: [...c.messages, msg] } : c)),
+      this.all().map((c) =>
+        c.id === id ? { ...c, messages: [...c.messages, msg] } : c,
+      ),
     );
     return msg;
   },
